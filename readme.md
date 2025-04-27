@@ -2,7 +2,7 @@
 
 A command-line interface (CLI) tool built with Go to interact with the Google Gemini API. Send prompts, upload files, and engage in chat sessions directly from your terminal.
 
-**Version:** 1.0.0 (Update this as you release new versions)
+**Version:** 1.0.0 (Currently in Beta Testing)
 
 ## Features
 
