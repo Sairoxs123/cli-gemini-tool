@@ -51,6 +51,8 @@ var languageExtensions = map[string]string{
 	// Add more as needed
 }
 
+var configFile string = os.Getenv("LOCALAPPDATA") + "\\gemshell\\config.json"
+
 // Helper to check if an element exists in a string slice
 func checkIfInArray(array []string, element string) bool {
 	for _, val := range array {
@@ -63,7 +65,7 @@ func checkIfInArray(array []string, element string) bool {
 
 // Reads configuration from config.json
 func readJSON() Item {
-	filePath := "config.json"
+	filePath := configFile
 	jsonData, err := os.ReadFile(filePath)
 	if err != nil {
 		// If file doesn't exist, return an empty Item to allow initialization
@@ -134,7 +136,14 @@ func initialize() {
 		log.Fatalf("Error marshaling JSON: %v\n", err)
 	}
 
-	configFileName := "config.json"
+	configFileName := configFile
+	configDir := filepath.Dir(configFileName)
+
+	// Create the directory if it doesn't exist
+	// 0755 provides read/write/execute for owner, read/execute for group and others
+	if err := os.MkdirAll(configDir, 0755); err != nil {
+		log.Fatalf("Error creating config directory '%s': %v\n", configDir, err)
+	}
 	err = os.WriteFile(configFileName, jsonData, 0644)
 	if err != nil {
 		log.Fatalf("Error writing JSON file '%s': %v\n", configFileName, err)
@@ -409,7 +418,7 @@ func setModel(model string, models *genai.ModelInfoIterator) {
 	if err != nil {
 		log.Fatalf("Error marshaling JSON: %v\n", err)
 	}
-	configFileName := "config.json"
+	configFileName := configFile
 	err = os.WriteFile(configFileName, jsonData, 0644)
 	if err != nil {
 		log.Fatalf("Error writing JSON file '%s': %v\n", configFileName, err)
@@ -425,7 +434,7 @@ func setAPIKey(apiKey string) {
 	if err != nil {
 		log.Fatalf("Error marshaling JSON: %v\n", err)
 	}
-	configFileName := "config.json"
+	configFileName := configFile
 	err = os.WriteFile(configFileName, jsonData, 0644)
 	if err != nil {
 		log.Fatalf("Error writing JSON file '%s': %v\n", configFileName, err)
@@ -538,6 +547,7 @@ func main() {
 			return
 		} else if command == "--version" {
 			fmt.Printf("Gemini CLI Version: %s\n", version)
+			return
 		} else {
 			// Assume the first argument onwards is the prompt
 			prompt = strings.Join(os.Args[1:], " ")
