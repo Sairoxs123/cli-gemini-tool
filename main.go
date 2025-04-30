@@ -376,7 +376,9 @@ func sendMessage(ctx context.Context, cs *genai.ChatSession, client *genai.Clien
 			fmt.Print(strings.ReplaceAll(fmt.Sprintf("%v", part), "**", "\x1b[1m")) // Use Print to avoid extra newlines between parts if multiple exist
 		}
 		fmt.Println()
-		processResponseAndSaveFiles(resp)
+		if userInput != "Explain the code in this file step-by-step, focusing on its purpose and key logic." {
+			processResponseAndSaveFiles(resp)
+		}
 
 	} else {
 		fmt.Println("Received no response content or response was blocked.")
